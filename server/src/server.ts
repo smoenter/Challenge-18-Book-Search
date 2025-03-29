@@ -13,6 +13,7 @@ const server = new ApolloServer({
   resolvers
 });
 
+//starting the Apollo server and connecting it to the db
 const startApolloServer = async () => {
   await server.start();
   await db();
@@ -23,6 +24,8 @@ const startApolloServer = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
+
+  //Sets up Apollo server as middleware on the Express app to handle the GraphQL requests
   app.use('/graphql', expressMiddleware(server as any,
     {
       context: authenticateToken as any

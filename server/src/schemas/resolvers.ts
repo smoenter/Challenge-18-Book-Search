@@ -32,15 +32,7 @@ interface AddBookArgs {
   }
 }
 
-interface AddCommentArgs {
-  bookId: string;
-  commentText: string;
-}
 
-interface RemoveCommentArgs {
-  bookId: string;
-  commentId: string;
-}
 
 const resolvers = {
   Query: {
@@ -61,7 +53,7 @@ const resolvers = {
     me: async (_parent: any, _args: any, context: any) => {
       // If the user is authenticated, find and return the user's information along with their books
       if (context.user) {
-        return User.findOne({ _id: context.user._id }).populate('books');
+        return User.findOne({ _id: context.user._id }).populate('savedBooks');
       }
       // If the user is not authenticated, throw an AuthenticationError
       throw new AuthenticationError('Could not authenticate user.');
@@ -102,75 +94,30 @@ const resolvers = {
       // Return the token and the user
       return { token, user };
     },
-    addBook: async (_parent: any, { input }: AddBookArgs, context: any) => {
+    saveBook: async (_parent: any, { input }: AddBookArgs, context: any) => {
       if (context.user) {
-        const book = await Book.create({ ...input });
-
-        await User.findOneAndUpdate(
+        const updatedUser = await User.findOneAndUpdate( 
           { _id: context.user._id },
-          { $addToSet: { book: book._id } }
+          { $addToSet: {savedBooks: input } },
+          { new: true}
         );
-
-        return book;
+        return updatedUser;
       }
-      throw AuthenticationError;
-      ('You need to be logged in!');
+      throw new AuthenticationError('You need to be logged in!');
     },
-    addComment: async (_parent: any, { bookId, commentText }: AddCommentArgs, context: any) => {
-      if (context.user) {
-        return Book.findOneAndUpdate(
-          { _id: bookId },
-          {
-            $addToSet: {
-              comments: { commentText, commentAuthor: context.user.username },
-            },
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      }
-      throw AuthenticationError;
-    },
+  
     removeBook: async (_parent: any, { bookId }: BookArgs, context: any) => {
       if (context.user) {
-        const book = await Book.findOneAndDelete({
-          _id: bookId,
-          bookAuthor: context.user.username,
-        });
-
-        if(!book){
-          throw AuthenticationError;
-        }
-
-        await User.findOneAndUpdate(
-          { _id: context.user._id },
-          { $pull: { books: book._id } }
-        );
-
-        return book;
-      }
-      throw AuthenticationError;
-    },
-    removeComment: async (_parent: any, { bookId, commentId }: RemoveCommentArgs, context: any) => {
-      if (context.user) {
-        return Book.findOneAndUpdate(
-          { _id: bookId },
-          {
-            $pull: {
-              comments: {
-                _id: commentId,
-                commentAuthor: context.user.username,
-              },
-            },
-          },
+        const book = await Book.findOneAndDelete(
+          {_id: context.user._id },
+          { $pull: { savedBooks: { bookId} } },
           { new: true }
-        );
-      }
-      throw AuthenticationError;
+          );
+          return book;
+        }
+      throw  new AuthenticationError("You need to be logged in!");
     },
-  },
+  }
 };
 
 export default resolvers;
