@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { ADD_USER } from '../utils/mutations'
 
-import { createUser } from '../utils/API';
+// import { createUser } from '../utils/API';
 import Auth from '../utils/auth';
 import type { User } from '../models/User';
 
@@ -14,10 +16,14 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+  const [addUser, { error: addUserError, data: addUserData }] = useMutation(ADD_USER);
+
+  if (addUserError) console.log(JSON.stringify(addUserError))
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
+    console.log("singup check")
   };
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -25,20 +31,25 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
+      if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
 
     try {
-      const response = await createUser(userFormData);
+      const { data } = await addUser({
+        variables: { ...userFormData },
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      Auth.login(data.addUser.token);
 
-      const { token } = await response.json();
-      Auth.login(token);
+      // const response = await createUser(userFormData);
+      //  if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
+
+      // const { token } = await response.json();
+      // Auth.login(token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
