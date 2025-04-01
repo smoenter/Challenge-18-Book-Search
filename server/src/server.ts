@@ -6,6 +6,8 @@ import { ApolloServer } from '@apollo/server';// Note: Import from @apollo/serve
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
+// import cors from 'cors';
+
 
 //create  the Apollo server instace
 const server = new ApolloServer({
@@ -21,6 +23,10 @@ const startApolloServer = async () => {
   const PORT = process.env.PORT || 3001;
   const app = express();
 
+  //use CORS to handle cross-origin requests
+  // app.use(cors());
+
+  //middlewar for parsing request bodies
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
@@ -29,9 +35,10 @@ const startApolloServer = async () => {
   app.use('/graphql', expressMiddleware(server as any,
     {
       context: authenticateToken as any
-    }
-  ));
+    })
+  );
 
+  //serve static files in production 
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join('../client/dist')));
 
