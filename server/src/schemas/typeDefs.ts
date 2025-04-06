@@ -4,12 +4,12 @@ const typeDefs = `
     username: String
     email: String
     bookCount: Int
-    savedBooks: [Book]!
+    savedBooks: [Book!]!
   }
 
   type Book {
   bookId: String!
-    authors: [String]!
+    authors: [String!]!
     description: String!
     title: String!
     image: String
@@ -18,7 +18,7 @@ const typeDefs = `
 
  
   input BookInput {
-    authors: [String]!
+    authors: [String!]!
     description: String!
     title: String!
     bookId: String!
@@ -40,7 +40,7 @@ const typeDefs = `
   type Query {
     users: [User] 
     user(username: String!): User
-    books: [Book]!
+    books: [Book!]!
     book(bookId: ID!): Book
     me: User
   }

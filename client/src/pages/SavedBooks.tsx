@@ -6,16 +6,28 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 import type { User } from '../models/User';
 
+type SavedBook = {
+  bookId: string;
+  title: string;
+  authors: string[];
+  description: string;
+  image?: string;
+};
+
+type User = {
+  username: string;
+  email: string;
+  savedBooks: SavedBook[];
+};
 
 
+const SavedBooks = () => {
+  const [userData, setUserData] = useState<User>({
+    username: '',
+    email: '',
+    savedBooks: [],
+  });
 
-  const SavedBooks = () => {
-    const [userData, setUserData] = useState<User>({
-      bookId: '',
-      email: '',
-      password: '',
-      savedBooks: [],
-    });
 
   useEffect(() => {
     const getUserData = async () => {
@@ -67,7 +79,7 @@ import type { User } from '../models/User';
   };
 
   // if data isn't here yet, say so
-  if (userData.savedBooks.length === 0) {
+  if (!userData.savedBooks || userData.savedBooks.length === 0) {
     return <h2>LOADING OR NO BOOKS ARE SAVED...</h2>;
   }
 
@@ -85,9 +97,8 @@ import type { User } from '../models/User';
       <Container>
         <h2 className='pt-5'>
           {userData.savedBooks.length
-            ? `Viewing ${userData.savedBooks.length} saved ${
-                userData.savedBooks.length === 1 ? 'book' : 'books'
-              }:`
+            ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'
+            }:`
             : 'You have no saved books!'}
         </h2>
         <Row>
