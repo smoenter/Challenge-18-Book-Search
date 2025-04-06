@@ -9,10 +9,28 @@ mutation Login($email: String!, $password: String!) {
 `;
 
 export const ADD_USER = gql`
-mutation AddUser($input: UserInput!) {
-  addUser(input: $input) {
+mutation AddUser($username: String!, $email: String!, $password: String!) {
+  addUser(username: $username, email: $email, password: $password) {
     token
+    user {
+    _id
+    username
+    }
   }
 }
 `;
 
+export const REMOVE_BOOK = gql`
+mutation RemoveBook($bookId: String!) {
+  removeBook(bookId: $bookId) {
+    username
+    savedBooks {
+      bookId
+      title
+      authors
+      description
+      image
+    }
+  }
+}
+`;

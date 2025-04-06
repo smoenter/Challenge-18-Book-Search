@@ -53,7 +53,7 @@ const resolvers = {
     me: async (_parent: any, _args: any, context: any) => {
       // If the user is authenticated, find and return the user's information along with their books
       if (context.user) {
-        return User.findOne({ _id: context.user._id }).populate('savedooks');
+        return User.findOne({ _id: context.user._id }).populate('savedBooks');
       }
       // If the user is not authenticated, throw an AuthenticationError
       throw new AuthenticationError('Could not authenticate user.');
@@ -108,11 +108,12 @@ const resolvers = {
   
     removeBook: async (_parent: any, { bookId }: BookArgs, context: any) => {
       if (context.user) {
-        const book = await Book.findOneAndDelete(
-          {_id: context.user._id },
-          { $pull: { savedBooks: { bookId} } },
-           );
-          return book;
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        );
+          return updatedUser;
         }
       throw  new AuthenticationError("You need to be logged in!");
     },

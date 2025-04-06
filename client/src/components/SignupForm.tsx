@@ -8,18 +8,25 @@ import { ADD_USER } from '../utils/mutations'
 import Auth from '../utils/auth';
 import type { User } from '../models/User';
 
+
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>
 const SignupForm = ({}: { handleModalClose: () => void }) => {
   // set initial form state
-  const [userFormData, setUserFormData] = useState<User>({ username: '', email: '', password: '', savedBooks: [] });
+  const [userFormData, setUserFormData] = useState<User>({ 
+    username: '', 
+    email: '', 
+    password: '', 
+    savedBooks: [],
+  });
   // set state for form validation
-  const [validated] = useState(false);
+  const [validated, setValidated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
   const [addUser, { error: addUserError, data: addUserData }] = useMutation(ADD_USER);
 
   if (addUserError) console.log(JSON.stringify(addUserError))
 
+    //update state based on form input changes 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
@@ -34,11 +41,14 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
       if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+      setValidated(true);
+      return;
     }
+  
 
     try {
       const { data } = await addUser({
-        variables: { ...userFormData },
+        variables: { input: {...userFormData } },
       });
 
       Auth.login(data.addUser.token);

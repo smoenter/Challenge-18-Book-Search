@@ -6,9 +6,17 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 import type { User } from '../models/User';
 
+type SavedBook = {
+  bookId: string;
+  title: string;
+  authors: string[];
+  description: string;
+  image?: string;
+};
+
 const SavedBooks = () => {
   const [userData, setUserData] = useState<User>({
-    username: '',
+    book: '',
     email: '',
     password: '',
     savedBooks: [],
@@ -23,7 +31,7 @@ const SavedBooks = () => {
         const token = Auth.loggedIn() ? Auth.getToken() : null;
 
         if (!token) {
-          return false;
+          return;
         }
 
         const response = await getMe(token);
