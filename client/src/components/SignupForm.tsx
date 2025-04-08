@@ -47,17 +47,19 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
       event.preventDefault();
       event.stopPropagation();
       setValidated(true);
-      // return;
+      return;
     }
   
 
     try {
       const { data } = await addUser({
         variables: {
+          input:{
           username: userFormData.username,
           email: userFormData.email,
           password: userFormData.password,
          },
+        }, 
       });
 
       Auth.login(data.addUser.token);
