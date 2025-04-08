@@ -8,6 +8,7 @@ import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
 // import cors from 'cors';
 
+// dotenv.config();
 
 //create  the Apollo server instace
 const server = new ApolloServer({
@@ -18,7 +19,7 @@ const server = new ApolloServer({
 //starting the Apollo server and connecting it to the db
 const startApolloServer = async () => {
   await server.start();
-  await db();
+  await db;
 
   const PORT = process.env.PORT || 3001;
   const app = express();
@@ -41,9 +42,16 @@ const startApolloServer = async () => {
   //serve static files in production 
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join('../client/dist')));
+    console.log('production mode activated')
 
     app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join('../client/dist/index.html'));
+      try {
+        res.sendFile(path.join('../client/dist/index.html'));
+      } catch (error) {
+        console.error(error)
+        res.status(400).json(error)
+      }
+      
     });
   }
 // setup the server to listen on a port
