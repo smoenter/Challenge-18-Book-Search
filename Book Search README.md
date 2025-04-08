@@ -35,7 +35,7 @@ The Book Search Application is a full-stack MERN (MongoDB, Express.js, React, No
     ```bash
     npm run develop
     ```
-2. Open your browser and navigate to `http://localhost:3002`.
+2. Open your browser and navigate to `http://localhost:3001`.
 
 ## Links
 - GitHub: https://github.com/smoenter/Challenge-18-Book-Search
