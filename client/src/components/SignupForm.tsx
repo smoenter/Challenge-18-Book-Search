@@ -8,15 +8,20 @@ import { ADD_USER } from '../utils/mutations'
 import Auth from '../utils/auth';
 import type { User } from '../models/User';
 
+type SignupFormData = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 
 // biome-ignore lint/correctness/noEmptyPattern: <explanation>
 const SignupForm = ({}: { handleModalClose: () => void }) => {
   // set initial form state
-  const [userFormData, setUserFormData] = useState<User>({ 
+  const [userFormData, setUserFormData] = useState<SignupFormData>({ 
     username: '', 
     email: '', 
     password: '', 
-    savedBooks: [],
   });
   // set state for form validation
   const [validated, setValidated] = useState(false);
@@ -42,13 +47,17 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
       event.preventDefault();
       event.stopPropagation();
       setValidated(true);
-      return;
+      // return;
     }
   
 
     try {
       const { data } = await addUser({
-        variables: { input: {...userFormData } },
+        variables: {
+          username: userFormData.username,
+          email: userFormData.email,
+          password: userFormData.password,
+         },
       });
 
       Auth.login(data.addUser.token);
@@ -69,7 +78,6 @@ const SignupForm = ({}: { handleModalClose: () => void }) => {
       username: '',
       email: '',
       password: '',
-      savedBooks: [],
     });
   };
 

@@ -39,14 +39,7 @@ if (loginError) console.log(JSON.stringify(loginError))
       });
 
       Auth.login(data.login.token);
-      // const response = await loginUser(userFormData);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const { token } = await response.json();
-      // Auth.login(token);
+     
     } catch (err) {
       console.error(err);
       setShowAlert(true);
