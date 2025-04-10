@@ -6,10 +6,9 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/googlebooks';
+    console.log('Connecting to MongoDB with URI', MONGODB_URI);
     await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 60000, // Increase timeout to 30 seconds
+    serverSelectionTimeoutMS: 60000, // Increase timeout to 60 seconds
     });
     console.log('MongoDB connected successfully');
   } catch (err) {

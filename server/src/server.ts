@@ -6,7 +6,7 @@ import { ApolloServer } from '@apollo/server';// Note: Import from @apollo/serve
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
-// import cors from 'cors';
+
 
 // dotenv.config();
 
@@ -18,15 +18,13 @@ const server = new ApolloServer({
 
 //starting the Apollo server and connecting it to the db
 const startApolloServer = async () => {
-  await server.start();
-  await db;
+    await server.start();
+    await db();
 
   const PORT = process.env.PORT || 3001;
   const app = express();
 
-  //use CORS to handle cross-origin requests
-  // app.use(cors());
-
+ 
   //middlewar for parsing request bodies
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
@@ -44,6 +42,7 @@ const startApolloServer = async () => {
     app.use(express.static(path.join('../client/dist')));
     console.log('production mode activated')
 
+    
     app.get('*', (_req: Request, res: Response) => {
       try {
         res.sendFile(path.join('../client/dist/index.html'));
