@@ -75,7 +75,7 @@ const SavedBooks = () => {
 
   // if data isn't here yet, say so
   if (!userData.savedBooks || userData.savedBooks.length === 0) {
-    return <h2>LOADING ...</h2>;
+    return <h2>LOADING OR NO BOOKS ARE SAVED...</h2>;
   }
 
   return (
